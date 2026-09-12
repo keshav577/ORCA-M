@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ORCA Marine Intelligence"
+description = "A responsive marine intelligence workspace for fishermen and coastal operators, combining safety advisories, collaborative AI reasoning, marine conditions, maps, routes, and alerts in one calm operational interface."
+version = "1.0.0"
+id = "artifacts/orca-marine-intelligence"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24962
+
+[services.development]
+run = "pnpm --filter @workspace/orca-marine-intelligence run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/orca-marine-intelligence", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/orca-marine-intelligence/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24962"
+BASE_PATH = "/"

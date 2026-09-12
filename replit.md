@@ -1,6 +1,6 @@
-# [Project name]
+# ORCA Marine Intelligence
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Responsive marine intelligence workspace for fishermen and coastal operators, combining safety advisories, collaborative AI reasoning, ocean conditions, maps, routes, and alerts.
 
 ## Run & Operate
 
@@ -22,15 +22,20 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/orca-marine-intelligence` — the runnable React + Vite ORCA web app
+- `artifacts/api-server` — shared API server scaffold
+- `artifacts/mockup-sandbox` — reusable component preview workspace
+- `attached_assets` — source briefs for the ORCA SIH problem statement and UI direction
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The first release is a frontend-only product prototype using clearly labeled local preview fixtures.
+- The app keeps safety verdicts presentation-only; no browser-side rules infer GO, CAUTION, or NO-GO.
+- The responsive shell uses a desktop sidebar and mobile bottom navigation so the same product feels intentional on both form factors.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+ORCA answers the operational question “Can I go?” with a prominent safety verdict, evidence freshness, marine and weather conditions, alerts, a PFZ map workspace, route safety planning, and a conversational assistant that explains a collaborative agent trace in plain language. The interface includes English, Hindi, and Telugu affordances and distinguishes live, cached, stale, and unavailable readings.
 
 ## User preferences
 
