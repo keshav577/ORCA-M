@@ -200,14 +200,58 @@ function Assistant() {
 function MapWorkspace() {
   const [layers, setLayers] = useState({ zones: true, vessels: true, boundaries: true });
   const [selectedLayer, setSelectedLayer] = useState('All layers');
+  const [selectedZone, setSelectedZone] = useState('PFZ 04');
+  const zones = [
+    { id: 'PFZ 04', distance: '8.2 nm SW', signal: 'Strong signal', status: 'GO' },
+    { id: 'PFZ 02', distance: '12.6 nm W', signal: 'Moderate signal', status: 'CAUTION' },
+    { id: 'PFZ 07', distance: '18.1 nm S', signal: 'Fresh observation', status: 'GO' },
+  ];
+  const activeZone = zones.find((zone) => zone.id === selectedZone) ?? zones[0];
   const toggle = (key: keyof typeof layers) => setLayers((current) => ({ ...current, [key]: !current[key] }));
   return <div>
     <DemoBanner />
     <div className="orca-page-head"><div><div className="orca-eyebrow">Geospatial workspace</div><h1 className="orca-h1">See the water around you.</h1><p className="orca-muted" style={{ margin: 0 }}>A simple operational view for zones, vessels and boundaries near Malpe.</p></div><div className="orca-control-row"><div className="orca-segmented">{['All layers', 'PFZ zones', 'Vessels'].map((layer) => <button key={layer} className={selectedLayer === layer ? 'active' : ''} onClick={() => setSelectedLayer(layer)} data-testid={`button-map-layer-${layer.toLowerCase().replaceAll(' ', '-')}`}>{layer}</button>)}</div><FreshnessBadge status="CACHED" text="Map cache · 09:31" /></div></div>
     <div className="orca-map-workspace">
-      <section className="orca-big-map" data-testid="map-canvas"><span className="orca-map-label" style={{ left: 24, top: 25 }}>Malpe harbour</span><span className="orca-map-label" style={{ left: 47, top: 17 }}>12°58'N</span><span className="orca-map-label" style={{ right: 25, bottom: 27 }}>Arabian sea</span><div className="orca-map-compass">N</div><div className="orca-big-zone" style={{ opacity: layers.zones ? 1 : .08 }}><span>PFZ 04 · SELECTED</span></div><div className="orca-big-vessel" style={{ opacity: layers.vessels ? 1 : .12 }} /><div style={{ position: 'absolute', zIndex: 2, right: 23, top: 77, width: 92, height: 54, border: '1px dashed rgba(194,111,37,.7)', background: 'rgba(255,204,116,.16)', borderRadius: '45% 55% 48% 60%', opacity: layers.boundaries ? 1 : .1 }} /><span className="orca-map-label" style={{ right: 22, top: 137, color: '#a47b44' }}>Boundary</span><div className="orca-map-zoom"><button onClick={() => undefined} data-testid="button-map-zoom-in">+</button><button onClick={() => undefined} data-testid="button-map-zoom-out">−</button></div></section>
+      <section className="orca-big-map" data-testid="map-canvas">
+        <div className="orca-map-heading"><Globe2 size={14} /> World view · India focus</div>
+        <svg className="orca-world-map" viewBox="0 0 900 540" role="img" aria-label="Stylized world map focused on India's west coast">
+          <defs>
+            <pattern id="orca-grid" width="90" height="54" patternUnits="userSpaceOnUse">
+              <path d="M 90 0 L 0 0 0 54" fill="none" stroke="rgba(41,144,150,.18)" strokeWidth="1" />
+            </pattern>
+            <linearGradient id="orca-land" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f3e9d6" />
+              <stop offset="100%" stopColor="#e7d8bc" />
+            </linearGradient>
+          </defs>
+          <rect width="900" height="540" fill="url(#orca-grid)" />
+          <path className="orca-landmass" d="M63 157 98 126 146 119 174 138 180 168 164 190 132 197 105 184 75 190Z" />
+          <path className="orca-landmass" d="M191 94 238 77 291 84 324 105 350 139 341 169 313 185 287 177 266 198 247 185 218 181 199 153 178 133Z" />
+          <path className="orca-landmass" d="M202 211 238 221 258 249 248 287 225 313 207 347 184 334 172 296 179 261Z" />
+          <path className="orca-landmass" d="M345 94 391 77 450 82 493 98 541 91 583 111 629 102 679 124 728 145 772 172 801 210 790 243 756 258 715 250 687 276 652 263 624 282 602 259 570 268 549 238 512 227 488 201 449 204 419 180 381 177 358 147Z" />
+          <path className="orca-landmass" d="M615 300 636 309 649 333 645 355 632 376 620 399 604 383 596 360 583 342 591 323Z" />
+          <path className="orca-landmass" d="M726 360 765 350 804 367 820 395 808 427 774 438 738 425 715 396Z" />
+          <path className="orca-india" d="M583 256 599 252 617 263 632 276 646 291 652 309 644 324 633 338 625 360 613 345 604 326 591 311 580 292 575 273Z" style={{ opacity: layers.zones ? 1 : .15 }} />
+          <path className="orca-coastline" d="M583 256 575 273 580 292 591 311 604 326 613 345 625 360" />
+          <ellipse className="orca-pfz-halo" cx="565" cy="301" rx="56" ry="38" style={{ opacity: layers.zones ? 1 : .08 }} />
+          <circle className="orca-harbour-dot" cx="579" cy="315" r="7" style={{ opacity: layers.vessels ? 1 : .18 }} />
+          <circle className="orca-vessel-dot" cx="548" cy="350" r="8" style={{ opacity: layers.vessels ? 1 : .12 }} />
+          <path className="orca-boundary-line" d="M641 235 C684 251 694 287 679 328 C667 359 684 381 710 394" style={{ opacity: layers.boundaries ? 1 : .12 }} />
+          <text className="orca-map-svg-label" x="548" y="220">INDIA</text>
+          <text className="orca-map-svg-label small" x="520" y="384">MALPE</text>
+          <text className="orca-map-svg-label small" x="500" y="289">ARABIAN SEA</text>
+          <text className="orca-map-svg-label small" x="645" y="228">BANGLADESH</text>
+        </svg>
+        <span className="orca-map-label" style={{ left: 24, top: 25 }}>Malpe harbour · 12°58'N</span>
+        <span className="orca-map-label" style={{ right: 25, bottom: 27 }}>Global context</span>
+        <div className="orca-map-compass">N</div>
+        <div className="orca-map-zone-tag" style={{ opacity: layers.zones ? 1 : .1 }}>PFZ 04 · SELECTED</div>
+        <div className="orca-map-boundary-tag" style={{ opacity: layers.boundaries ? 1 : .1 }}>Regulated boundary</div>
+        <div className="orca-map-zoom"><button onClick={() => undefined} aria-label="Zoom in" data-testid="button-map-zoom-in">+</button><button onClick={() => undefined} aria-label="Zoom out" data-testid="button-map-zoom-out">−</button></div>
+      </section>
       <aside className="orca-map-side">
-        <div className="orca-card orca-card-pad"><div className="orca-eyebrow">Selected area</div><div className="orca-h2" style={{ marginTop: 6 }}>PFZ 04</div><p className="orca-muted" style={{ fontSize: 11, margin: '5px 0 14px' }}>A promising nearshore fishing zone, 8.2 nautical miles south-west of Malpe.</p><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><FreshnessBadge status="LIVE" text="Satellite signal" /><button className="orca-button orca-button-ghost" onClick={() => undefined} data-testid="button-zone-details">Details <ArrowRight size={12} /></button></div></div>
+        <div className="orca-card orca-card-pad"><div className="orca-eyebrow">Selected area · India west coast</div><div className="orca-h2" style={{ marginTop: 6 }}>{activeZone.id}</div><p className="orca-muted" style={{ fontSize: 11, margin: '5px 0 14px' }}>Fishing signal {activeZone.distance} from Malpe harbour. {activeZone.signal} in the latest local preview.</p><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}><FreshnessBadge status="LIVE" text="Satellite signal" /><button className="orca-button orca-button-ghost" onClick={() => undefined} data-testid="button-zone-details">Details <ArrowRight size={12} /></button></div></div>
+        <div className="orca-card orca-card-pad"><div className="orca-eyebrow">Nearby fishing zones</div><div className="orca-zone-list">{zones.map((zone) => <button key={zone.id} className={`orca-zone-row ${selectedZone === zone.id ? 'selected' : ''}`} onClick={() => setSelectedZone(zone.id)} data-testid={`button-select-zone-${zone.id.toLowerCase().replace(' ', '-')}`}><span><strong>{zone.id}</strong><small>{zone.distance} · {zone.signal}</small></span><span className={`orca-zone-status ${zone.status.toLowerCase()}`}>{zone.status}</span></button>)}</div></div>
         <div className="orca-card orca-card-pad"><div className="orca-eyebrow">Map layers</div>{[['zones', 'PFZ zones', Layers3], ['vessels', 'Nearby vessels', Ship], ['boundaries', 'Regulated boundaries', ShieldCheck]].map(([key, label, Icon]) => <div className="orca-layer" key={key as string}><span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><Icon size={14} color="#188f90" />{label as string}</span><button className={`orca-switch ${layers[key as keyof typeof layers] ? 'on' : ''}`} onClick={() => toggle(key as keyof typeof layers)} aria-label={`Toggle ${label}`} data-testid={`button-toggle-${key}`}><span /></button></div>)}</div>
         <div className="orca-card orca-card-pad"><div className="orca-eyebrow">Vessel activity</div><div className="orca-h2" style={{ marginTop: 6 }}>7 nearby</div><p className="orca-muted" style={{ fontSize: 11, margin: '5px 0 0' }}>Last position received 18 min ago. Your vessel is shown in navy.</p><div style={{ marginTop: 14 }}><FreshnessBadge status="STALE" text="AIS positions · 18 min" /></div></div>
       </aside>
